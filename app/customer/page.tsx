@@ -79,8 +79,8 @@ export default function Home() {
                     <td className="py-4">{dueDate}</td>
                     <td className="py-4">
                       <button
-                        type="button"
-                        className=" px-6 p-3.5 bg-[#FE3131] text-sm font-semibold text-white rounded-[6px] hover:bg-[#bd2626] border-0"
+                        type="button" disabled={index%3===1}
+                        className={" px-6 p-3.5 bg-[#FE3131] text-sm font-semibold text-white rounded-[6px] hover:bg-[#bd2626] border-0" + (index%3===1?" bg-[#6c7074] hover:bg-[#6c7074]":"")}
                       >
                         Due Now
                       </button>
