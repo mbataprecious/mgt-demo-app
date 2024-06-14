@@ -1,4 +1,5 @@
 import { vehicleServiceData } from "@/utils/mock";
+import Link from "next/link";
 
 const tableHeader = [
   "Name",
@@ -17,12 +18,15 @@ export default function Home() {
       <div className=" p-6">
         <div className="flex justify-between">
           <h3 className=" text-[21px] text-[#727891] ">Customer Logs</h3>
+          <Link href={"/customer/add"}>
           <button
             type="button"
             className=" px-6 p-3.5 bg-[#000000] text-sm font-semibold text-white rounded-[6px] hover:bg-[#201f1f] border-0"
           >
             Add Customer
-          </button>
+          </button>          
+          </Link>
+
         </div>
         <table className="w-full text-xs text-left text-[#727891] mt-7">
           <thead className="text-xs text-[#C2C5D1] capitalize border-b border-[#E0E2E8]">
@@ -39,7 +43,6 @@ export default function Home() {
 
             </tr>
           </thead>
-   
           <tbody>
             {vehicleServiceData?.map(
               (
