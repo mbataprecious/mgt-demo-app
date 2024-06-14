@@ -133,7 +133,7 @@ export default function AddServiceModal({ open, setOpen }: Props) {
                                 type="text"
                                 name="milage"
                                 label="Milage (KM)"
-                                placeholder="Last Name"
+                                placeholder="Last Milage"
                               />
                             </div>
                           </div>

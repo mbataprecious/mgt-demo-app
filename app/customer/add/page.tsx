@@ -55,7 +55,15 @@ console.log({errors})
           <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)} className=" max-w-2xl">
               <div className="flex space-x-5">
-                <div className="w-full"></div>
+                <div className="w-full">
+                <Input
+                    type="text"
+                    name="name"
+                    label=" Client Name"
+                    placeholder="Enter Name"
+                    required={true}
+                  />
+                </div>
                 <div className="w-full">
                   <PhoneNumberInput
                     type="tel"
@@ -69,7 +77,7 @@ console.log({errors})
               <div className="flex space-x-5">
                 <div className="w-full">
                   <Input
-                    type="text"
+                    type="email"
                     name="email"
                     label=" Client Email Address"
                     placeholder="Enter text"

@@ -1,5 +1,7 @@
+"use client";
 import { vehicleServiceData } from "@/utils/mock";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const tableHeader = [
   "Name",
@@ -13,6 +15,7 @@ const tableHeader = [
   "Status",
 ];
 export default function Home() {
+  const router=useRouter()
   return (
     <div className="bg-white rounded-lg">
       <div className=" p-6">
@@ -61,7 +64,8 @@ export default function Home() {
                 return (
                   <tr
                     key={index}
-                    className="bg-white hover:bg-gray-50 cursor-pointer border-b"
+                    onClick={() => router.push(`/customer/details`)}
+                    className="bg-white relative hover:bg-gray-50 cursor-pointer border-b"
                   >
                     <td className="capitalize py-4 font-medium whitespace-nowrap">
                       {name}
@@ -78,7 +82,7 @@ export default function Home() {
                         type="button"
                         className=" px-6 p-3.5 bg-[#FE3131] text-sm font-semibold text-white rounded-[6px] hover:bg-[#bd2626] border-0"
                       >
-                        View Profile
+                        Due Now
                       </button>
                     </td>
                   </tr>
