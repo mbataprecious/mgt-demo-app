@@ -11,7 +11,7 @@ interface Props {
   isClearable?: boolean;
   placeholder?: string;
   loadOptions: (
-    inputValue: string,
+    inputValue: string
   ) => Promise<{ value: string; label: string }[]>;
   isMulti?: boolean;
   required: boolean;
@@ -28,7 +28,7 @@ const CustomSearchSelect = ({
   disabled,
 }: Props) => {
   const { control, formState } = useFormContext();
-
+  const id = useId();
   return (
     <div id={name} className="control custom-select">
       {label && (
@@ -42,7 +42,7 @@ const CustomSearchSelect = ({
         name={name}
         render={({ field: { onBlur, onChange, value, ref } }) => (
           <ReactSelect
-            instanceId={useId()}
+            instanceId={id}
             isDisabled={disabled}
             ref={ref}
             placeholder={placeholder}
@@ -61,7 +61,7 @@ const CustomSearchSelect = ({
                 | SingleValue<{
                     value: string;
                     label: string;
-                  }>,
+                  }>
             ) => onChange(newValue)}
             loadOptions={loadOptions}
           />
