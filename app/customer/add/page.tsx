@@ -46,8 +46,6 @@ export default function Home() {
     formState: { errors },
   } = methods;
   const onSubmit = async (data: typeof defaultValues) => {
-    data["lastServiceDate"]="23/04/2024"
-    data["dueDate"]=getCurrentFormattedDate()
     
     try {
       const userId = nanoid();
@@ -55,7 +53,7 @@ export default function Home() {
         CUSTOMER_KEY
       ) as typeof vehicleServiceData;
       setLocalStorageItem(CUSTOMER_KEY, [
-        { userId, ...data },
+        { userId,lastServiceDate:"23/04/2024",dueDate:getCurrentFormattedDate(), ...data },
         ...(allCustomers ?? []),
       ]);
       route.push("/customer/" + userId);
