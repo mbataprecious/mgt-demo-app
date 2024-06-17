@@ -18,6 +18,9 @@ const config: Config = {
       boxShadow: {
         "custom-purple": "0 8px 16px #7B68EE66"
       },
+      backdropBlur: {
+        '5.6': '5.6px',
+      }
     }
   },
   plugins: []

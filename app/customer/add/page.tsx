@@ -1,8 +1,17 @@
-"use client"
+"use client";
 import { Input } from "@/components/formControls/Input";
 import PhoneNumberInput from "@/components/formControls/PhoneNumberInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { getCookie, setCookie } from "cookies-next";
+import { nanoid } from "nanoid";
+import {
+  CUSTOMER_KEY,
+  getLocalStorageItem,
+  setLocalStorageItem,
+} from "@/utils/storage";
+import { vehicleServiceData } from "@/utils/mock";
+import { getCurrentFormattedDate } from "@/utils/helpers";
 
 const tableHeader = [
   "Name",
@@ -16,10 +25,7 @@ const tableHeader = [
   "Status",
 ];
 export default function Home() {
-
-  const route = useRouter()
-
-
+  const route = useRouter();
 
   const defaultValues = {
     name: "",
@@ -27,7 +33,7 @@ export default function Home() {
     phoneNumber: "",
     vehicleMake: "",
     vehicleModel: "",
-    plateNumber:"",
+    plateNumber: "",
     address: "",
     mileage: 0,
   };
@@ -36,27 +42,45 @@ export default function Home() {
     defaultValues,
   });
 
-  const {formState:{errors}}=methods
+  const {
+    formState: { errors },
+  } = methods;
   const onSubmit = async (data: typeof defaultValues) => {
+    data["lastServiceDate"]="23/04/2024"
+    data["dueDate"]=getCurrentFormattedDate()
+    
     try {
-      route.push("/customer/details")
+      const userId = nanoid();
+      const allCustomers = getLocalStorageItem(
+        CUSTOMER_KEY
+      ) as typeof vehicleServiceData;
+      setLocalStorageItem(CUSTOMER_KEY, [
+        { userId, ...data },
+        ...(allCustomers ?? []),
+      ]);
+      route.push("/customer/" + userId);
     } catch (err) {
       console.log("error ", err);
     }
   };
-console.log({errors})
+  console.log({ errors });
   return (
     <div className="bg-white rounded-lg">
       <div className=" p-6">
         <div>
-            <h3 className=" text-[21px] font-semibold text-[#727891] mb-5">Add New Client</h3>
+          <h3 className=" text-[21px] font-semibold text-[#727891] mb-5">
+            Add New Client
+          </h3>
         </div>
         <div className="mt-10 mb-20">
           <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit(onSubmit)} className=" max-w-2xl">
+            <form
+              onSubmit={methods.handleSubmit(onSubmit)}
+              className=" max-w-2xl"
+            >
               <div className="flex space-x-5">
                 <div className="w-full">
-                <Input
+                  <Input
                     type="text"
                     name="name"
                     label=" Client Name"

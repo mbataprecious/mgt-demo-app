@@ -9,13 +9,27 @@ import {
 import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "./formControls/Input";
 import { Textarea } from "./formControls/Textarea";
+import {
+  SERVICES_KEY,
+  getLocalStorageItem,
+  setLocalStorageItem,
+} from "@/utils/storage";
+import { getCurrentFormattedDate } from "@/utils/helpers";
+import { vehicleServiceData } from "@/utils/mock";
 
 interface Props {
+  addService: (data: IServicesMap[string][number]) => void;
+  details: (typeof vehicleServiceData)[0];
   open: boolean;
   setOpen: (value: boolean) => void;
 }
 
-export default function AddServiceModal({ open, setOpen }: Props) {
+export default function AddServiceModal({
+  open,
+  setOpen,
+  details,
+  addService,
+}: Props) {
   const [errorOcurred, setErrorOcurred] = React.useState(false);
   const [notificationVisible, setNotificationVisible] = React.useState(false);
 
@@ -26,6 +40,7 @@ export default function AddServiceModal({ open, setOpen }: Props) {
     mileage: 10500,
     notes: "",
   };
+
   const methods = useForm({
     mode: "onChange",
     defaultValues,
@@ -41,20 +56,31 @@ export default function AddServiceModal({ open, setOpen }: Props) {
   type DefaultValuesKeys = keyof DefaultValues;
 
   const onSubmit = async (data: DefaultValues) => {
-    setErrorOcurred(false);
-    //imported this from the customization you made on the contact form
-    const shapedFormData = (Object.keys(data) as DefaultValuesKeys[]).map(
-      (key) => {
-        const value = data[key];
-        return {
-          objectTypeId: "0-1",
-          name: key,
-          value: value,
-        };
-      }
-    );
-    console.log(shapedFormData);
     try {
+      const parsedData = {
+        serviceType: data.serviceType,
+        serviceDate: getCurrentFormattedDate(),
+        mileage: data.mileage,
+        lastServiceDate: "20/02/2024",
+        attendantsName: data.name,
+        additionalNotes: data.notes,
+      };
+      setErrorOcurred(false);
+      if (!getLocalStorageItem(SERVICES_KEY)) {
+        setLocalStorageItem(SERVICES_KEY, { [details.userId]: [parsedData] });
+        addService(parsedData);
+      } else {
+        const servicesMap = getLocalStorageItem(SERVICES_KEY) as IServicesMap;
+        const currentUserList = servicesMap?.[details.userId];
+        setLocalStorageItem(SERVICES_KEY, {
+          [details.userId]: [parsedData, ...(currentUserList ?? [])],
+        });
+        addService(parsedData);
+      }
+      //imported this from the customization you made on the contact form
+
+      setOpen(false);
+
       //   const submission = await postHubSpotDemoForm(shapedFormData, formTarget);
       return setNotificationVisible(true);
     } catch (err) {
@@ -106,8 +132,8 @@ export default function AddServiceModal({ open, setOpen }: Props) {
                               <Input
                                 type="text"
                                 name="name"
-                                label="Client Name"
-                                placeholder="Client Name"
+                                label="Attendant's Name"
+                                placeholder="Attendant's Name"
                               />
                             </div>
                             <div className="w-full">
