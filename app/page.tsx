@@ -11,6 +11,8 @@ const tableHeader = [
   "Due Date",
   "Status",
 ];
+
+const revalidate = 0
 export default function Home() {
   return (
     <div className="bg-white rounded-lg">
@@ -71,12 +73,7 @@ export default function Home() {
                     <td className="py-4">{mileage}</td>
                     <td className="py-4">{dueDate}</td>
                     <td className="py-4">
-                      <button
-                        type="button"
-                        className=" px-6 p-3.5 bg-[#FE3131] text-sm font-semibold text-white rounded-[6px] hover:bg-[#bd2626] border-0"
-                      >
-                        View Profile
-                      </button>
+                        
                     </td>
                   </tr>
                 );
