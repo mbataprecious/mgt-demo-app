@@ -12,6 +12,7 @@ import {
 import { sendEmail, sendSms} from "./server";
 
 import { toast } from 'react-hot-toast';
+import ReminderSentModal from "@/components/ReminderSentModal";
 
 const tableHeader = [
   "Name",
@@ -26,6 +27,7 @@ const tableHeader = [
 ];
 export default function Home() {
   const mounted = useRef(true);
+  const [open, setOpen] = useState(false);
   const [customerList, setCustomerList] = useState<typeof vehicleServiceData>(
     []
   );
@@ -58,6 +60,7 @@ export default function Home() {
         await sendSms(cleanPhoneNumber, message);
         await sendEmail(email, message);
         toast.success(`${name} has been notified.`, { id: toastId });
+        setOpen(true)
     }
     catch(error){
         toast.error(`Failed to notify ${name}.`, { id: toastId });
@@ -169,6 +172,7 @@ export default function Home() {
           !customerList.length && <div className=" h-[500px]"></div>
         }
       </div>
+      <ReminderSentModal open={open} setOpen={setOpen} />
     </div>
   );
 }

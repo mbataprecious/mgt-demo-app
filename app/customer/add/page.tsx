@@ -12,23 +12,16 @@ import {
 } from "@/utils/storage";
 import { vehicleServiceData } from "@/utils/mock";
 import { getCurrentFormattedDate } from "@/utils/helpers";
+import ReminderSentModal from "@/components/ReminderSentModal";
+import { useState } from "react";
+import { toast } from 'react-hot-toast';
 
-const tableHeader = [
-  "Name",
-  "Email",
-  "Phone Number",
-  "Vehicle Make",
-  "Vehicle Model",
-  "Last Service Date",
-  "Milage(KM)",
-  "Due Date",
-  "Status",
-];
 export default function Home() {
   const route = useRouter();
 
   const defaultValues = {
-    name: "",
+    lastName: "",
+    firstName: "",
     email: "",
     phoneNumber: "",
     vehicleMake: "",
@@ -46,16 +39,23 @@ export default function Home() {
     formState: { errors },
   } = methods;
   const onSubmit = async (data: typeof defaultValues) => {
-    
     try {
       const userId = nanoid();
       const allCustomers = getLocalStorageItem(
         CUSTOMER_KEY
       ) as typeof vehicleServiceData;
+      const { firstName, lastName } = data;
       setLocalStorageItem(CUSTOMER_KEY, [
-        { userId,lastServiceDate:"23/04/2024",dueDate:getCurrentFormattedDate(), ...data },
+        {
+          userId,
+          lastServiceDate: "23/04/2024",
+          dueDate: getCurrentFormattedDate(),
+          name: `${firstName} ${lastName}`,
+          ...data,
+        },
         ...(allCustomers ?? []),
       ]);
+      toast.success(`new user added.`);
       route.push("/customer/" + userId);
     } catch (err) {
       console.log("error ", err);
@@ -77,12 +77,19 @@ export default function Home() {
               className=" max-w-2xl"
             >
               <div className="flex space-x-5">
-                <div className="w-full">
+                <div className="w-full flex space-x-3">
                   <Input
                     type="text"
-                    name="name"
-                    label=" Client Name"
-                    placeholder="Enter Name"
+                    name="firstName"
+                    label="First Name"
+                    placeholder="Enter First Name"
+                    required={true}
+                  />
+                  <Input
+                    type="text"
+                    name="lastName"
+                    label="Last Name"
+                    placeholder="Enter Last Name"
                     required={true}
                   />
                 </div>
