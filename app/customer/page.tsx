@@ -45,9 +45,12 @@ export default function Home() {
   }, []);
   const router = useRouter();
 
-  const handleDueMessage = async (userString: string) => {
-    const toastId = toast.loading("Sending message...");
-    const user = JSON.parse(userString);
+  const handleDueMessage = async (user: {
+    name: string;
+    email: string;
+    phoneNumber:string
+  }) => {
+    const toastId = toast.loading(`Notifying ${user.name}...`);
     const { name, email, phoneNumber } = user;
     const cleanPhoneNumber = phoneNumber.replace(/[^0-9]/g, "");
     const message = `Hi ${name}, your vehicle service is due. Please contact us to schedule an appointment.`;
@@ -149,19 +152,8 @@ export default function Home() {
                         }
                         onClick={(e) => {
                             e.stopPropagation();
-                            const currentUser = JSON.parse(getCookie("user") ?? "{}");
-                            console.log("currentUser", currentUser);
-                            const userString = JSON.stringify(
-                              vehicleServiceData[index]
-                            );
-                            if (currentUser?.name !== name) {
-                              deleteCookie("service");
-                              deleteCookie("user");
-                            } else {
-                            }
-                            setCookie("user", userString);
-                            console.log("data to be sent", userString);
-                            handleDueMessage(userString);
+                            
+                            handleDueMessage({name, email, phoneNumber});
                         }}
                       >
                         Due Now
