@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import SideBar from "@/components/SideBar";
 import NavigationBar from "@/components/NavigationBar";
+import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -41,6 +42,7 @@ export default function RootLayout({
           <SideBar menuItems={adminMenuItems} />
           <div className="sm:ml-[12.6635rem] flex-grow md:p-6">
             <NavigationBar current="Overview" />
+            <Toaster position="top-center" />
             <main className="mt-5 ">{children}</main>
           </div>
         </div>
