@@ -1,9 +1,9 @@
 export const vehicleServiceData = [
     {
         userId: "1",
-        name: "John Doe",
-        email: "JohnDoe@gmail.com",
-        phoneNumber: "+597 98 789 773",
+        name: "Daramola Afeez",
+        email: "daramolaafeez123@gmail.com",
+        phoneNumber: "+2347068533426",
         vehicleMake: "Toyota",
         vehicleModel: "Corolla 2020",
         lastServiceDate: "12/02/2024",

@@ -9,6 +9,9 @@ import {
   getLocalStorageItem,
   setLocalStorageItem,
 } from "@/utils/storage";
+import { sendEmail, sendSms} from "./server";
+
+import { toast } from 'react-hot-toast';
 
 const tableHeader = [
   "Name",
@@ -41,6 +44,23 @@ export default function Home() {
     mounted.current = false;
   }, []);
   const router = useRouter();
+
+  const handleDueMessage = async (userString: string) => {
+    const toastId = toast.loading("Sending message...");
+    const user = JSON.parse(userString);
+    const { name, email, phoneNumber } = user;
+    const cleanPhoneNumber = phoneNumber.replace(/[^0-9]/g, "");
+    const message = `Hi ${name}, your vehicle service is due. Please contact us to schedule an appointment.`;
+    try{
+        await sendSms(cleanPhoneNumber, message);
+        await sendEmail(email, message);
+        toast.success(`${name} has been notified.`, { id: toastId });
+    }
+    catch(error){
+        toast.error(`Failed to notify ${name}.`, { id: toastId });
+    }
+}
+
   return (
     <div className="bg-white rounded-lg">
       <div className=" p-6">
@@ -102,7 +122,6 @@ export default function Home() {
                       }
                       setCookie("user", userString);
                       console.log("data to be sent", userString);
-
                       router.push(`/customer/${userId}`);
                     }}
                     className="bg-white relative hover:bg-gray-50 cursor-pointer border-b"
@@ -119,6 +138,7 @@ export default function Home() {
                     <td className="py-4">{dueDate}</td>
                     <td className="py-4">
                       <button
+
                         type="button"
                         disabled={index % 3 === 1}
                         className={
@@ -127,6 +147,22 @@ export default function Home() {
                             ? " bg-[#FFE2E2] hover:bg-[#FFE2E2] text-[#6D6D6D]"
                             : " bg-[#FE3131] hover:bg-[#bd2626] text-white")
                         }
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            const currentUser = JSON.parse(getCookie("user") ?? "{}");
+                            console.log("currentUser", currentUser);
+                            const userString = JSON.stringify(
+                              vehicleServiceData[index]
+                            );
+                            if (currentUser?.name !== name) {
+                              deleteCookie("service");
+                              deleteCookie("user");
+                            } else {
+                            }
+                            setCookie("user", userString);
+                            console.log("data to be sent", userString);
+                            handleDueMessage(userString);
+                        }}
                       >
                         Due Now
                       </button>
