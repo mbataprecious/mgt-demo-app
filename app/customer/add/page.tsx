@@ -14,20 +14,9 @@ import { vehicleServiceData } from "@/utils/mock";
 import { getCurrentFormattedDate } from "@/utils/helpers";
 import ReminderSentModal from "@/components/ReminderSentModal";
 import { useState } from "react";
+import { toast } from 'react-hot-toast';
 
-const tableHeader = [
-  "Name",
-  "Email",
-  "Phone Number",
-  "Vehicle Make",
-  "Vehicle Model",
-  "Last Service Date",
-  "Milage(KM)",
-  "Due Date",
-  "Status",
-];
 export default function Home() {
-  const [open, setOpen] = useState(true);
   const route = useRouter();
 
   const defaultValues = {
@@ -66,6 +55,7 @@ export default function Home() {
         },
         ...(allCustomers ?? []),
       ]);
+      toast.success(`new user added.`);
       route.push("/customer/" + userId);
     } catch (err) {
       console.log("error ", err);
@@ -188,7 +178,6 @@ export default function Home() {
           </FormProvider>
         </div>
       </div>
-      <ReminderSentModal open={open} setOpen={setOpen} />
     </div>
   );
 }
