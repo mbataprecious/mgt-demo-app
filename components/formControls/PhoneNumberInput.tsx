@@ -31,7 +31,7 @@ const PhoneNumberInput = ({
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div>
+    <div className="relative control">
       {label && (
         <label className="label" htmlFor={name}>
           {label}{" "}
@@ -53,7 +53,7 @@ const PhoneNumberInput = ({
         }}
         render={({ field: { onChange, value } }) => (
           <PhoneInput
-            defaultCountry="NG"
+            defaultCountry="SR"
             placeholder={placeholder}
             value={value}
             onChange={onChange}

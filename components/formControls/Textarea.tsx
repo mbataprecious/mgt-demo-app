@@ -11,7 +11,7 @@ const Textarea = ({ name, label, className, ...rest }: Props) => {
   return (
     <div className="control">
       {label && (
-        <label className="block" htmlFor={name}>
+        <label className="label" htmlFor={name}>
           {label}
         </label>
       )}

@@ -1,6 +1,14 @@
+"use client";
 import { vehicleServiceData } from "@/utils/mock";
 import Link from "next/link";
-import { ViewProfileButton } from "./client";
+import { useRouter } from "next/navigation";
+import { setCookie, getCookie, deleteCookie } from "cookies-next";
+import { useEffect, useRef, useState } from "react";
+import {
+  CUSTOMER_KEY,
+  getLocalStorageItem,
+  setLocalStorageItem,
+} from "@/utils/storage";
 
 const tableHeader = [
   "Name",
@@ -14,20 +22,38 @@ const tableHeader = [
   "Status",
 ];
 export default function Home() {
+  const mounted = useRef(true);
+  const [customerList, setCustomerList] = useState<typeof vehicleServiceData>(
+    []
+  );
+  useEffect(() => {
+    if (mounted.current) {
+      const data = getLocalStorageItem(
+        CUSTOMER_KEY
+      ) as typeof vehicleServiceData;
+      if (!data) {
+        setLocalStorageItem(CUSTOMER_KEY, vehicleServiceData);
+        setCustomerList(vehicleServiceData);
+      } else {
+        setCustomerList(data);
+      }
+    }
+    mounted.current = false;
+  }, []);
+  const router = useRouter();
   return (
     <div className="bg-white rounded-lg">
       <div className=" p-6">
         <div className="flex justify-between">
           <h3 className=" text-[21px] text-[#727891] ">Customer Logs</h3>
           <Link href={"/customer/add"}>
-          <button
-            type="button"
-            className=" px-6 p-3.5 bg-[#000000] text-sm font-semibold text-white rounded-[6px] hover:bg-[#201f1f] border-0"
-          >
-            Add Customer
-          </button>          
+            <button
+              type="button"
+              className=" px-6 p-3.5 bg-[#000000] text-sm font-semibold text-white rounded-[6px] hover:bg-[#201f1f] border-0"
+            >
+              Add Customer
+            </button>
           </Link>
-
         </div>
         <table className="w-full text-xs text-left text-[#727891] mt-7">
           <thead className="text-xs text-[#C2C5D1] capitalize border-b border-[#E0E2E8]">
@@ -41,13 +67,13 @@ export default function Home() {
                   {header}
                 </th>
               ))}
-
             </tr>
           </thead>
           <tbody>
-            {vehicleServiceData?.map(
+            {customerList?.map(
               (
                 {
+                  userId,
                   name,
                   email,
                   phoneNumber,
@@ -59,10 +85,27 @@ export default function Home() {
                 },
                 index
               ) => {
+                // console.log(index)
                 return (
                   <tr
                     key={index}
-                    className="bg-white hover:bg-gray-50 cursor-pointer border-b"
+                    onClick={() => {
+                      const currentUser = JSON.parse(getCookie("user") ?? "{}");
+                      console.log("currentUser", currentUser);
+                      const userString = JSON.stringify(
+                        vehicleServiceData[index]
+                      );
+                      if (currentUser?.name !== name) {
+                        deleteCookie("service");
+                        deleteCookie("user");
+                      } else {
+                      }
+                      setCookie("user", userString);
+                      console.log("data to be sent", userString);
+
+                      router.push(`/customer/${userId}`);
+                    }}
+                    className="bg-white relative hover:bg-gray-50 cursor-pointer border-b"
                   >
                     <td className="capitalize py-4 font-medium whitespace-nowrap">
                       {name}
@@ -75,7 +118,18 @@ export default function Home() {
                     <td className="py-4">{mileage}</td>
                     <td className="py-4">{dueDate}</td>
                     <td className="py-4">
-                        <ViewProfileButton />
+                      <button
+                        type="button"
+                        disabled={index % 3 === 1}
+                        className={
+                          " px-6 p-3.5 text-sm font-semibold  rounded-[6px]  border-0" +
+                          (index % 3 === 1
+                            ? " bg-[#FFE2E2] hover:bg-[#FFE2E2] text-[#6D6D6D]"
+                            : " bg-[#FE3131] hover:bg-[#bd2626] text-white")
+                        }
+                      >
+                        Due Now
+                      </button>
                     </td>
                   </tr>
                 );
@@ -83,6 +137,9 @@ export default function Home() {
             )}
           </tbody>
         </table>
+        {
+          !customerList.length && <div className=" h-[500px]"></div>
+        }
       </div>
     </div>
   );

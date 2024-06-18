@@ -1,5 +1,12 @@
-import AddServicePartial from "@/components/AddServicePartial";
-import { serviceData } from "@/utils/mock";
+"use client";
+import AddServiceModal from "@/components/AddServiceModal";
+import { serviceData, vehicleServiceData } from "@/utils/mock";
+import {
+  CUSTOMER_KEY,
+  SERVICES_KEY,
+  getLocalStorageItem,
+} from "@/utils/storage";
+import { useEffect, useRef, useState } from "react";
 
 const tableHeader = [
   "Service Type",
@@ -10,18 +17,30 @@ const tableHeader = [
   "Additional Notes",
 ];
 
-export default function CustomerDetails() {
-  const details = {
-    name: "John Doe",
-    email: "JohnDoe@gmail.com",
-    phoneNumber: "+597 98 789 773",
-    vehicleMake: "Toyota",
-    vehicleModel: "Corolla 2020",
-    lastServiceDate: "12/02/2024",
-    mileage: 10500,
-    dueDate: "12/02/2024",
-    plateNumber: "BUJ 344 JJ",
-  };
+export default function CustomerDetails({
+  params,
+}: {
+  params: { userId: string };
+}) {
+  const mounted = useRef(true);
+  const [open, setOpen] = useState(false);
+  const [details, setDetails] = useState<(typeof vehicleServiceData)[0]>();
+  const [services, setServices] = useState<IServicesMap[string]>([]);
+  useEffect(() => {
+    if (mounted.current) {
+      const data = getLocalStorageItem(
+        CUSTOMER_KEY
+      ) as typeof vehicleServiceData;
+      const userData = data.find(({ userId }) => userId === params.userId)!;
+      setDetails(userData);
+
+      const servicesMap = getLocalStorageItem(SERVICES_KEY) as IServicesMap;
+      const currentUserList = servicesMap?.[userData.userId];
+      setServices(currentUserList ?? []);
+    }
+    mounted.current = false;
+  }, []);
+
   const titleMap = {
     name: "Name",
     email: "Email",
@@ -49,7 +68,7 @@ export default function CustomerDetails() {
               </h4>
 
               <h3 className="font-semibold text-[#727891]">
-                {details[val as keyof typeof details]}
+                {details?.[val as keyof typeof details]}
               </h3>
             </div>
           ))}
@@ -62,7 +81,7 @@ export default function CustomerDetails() {
               </h4>
 
               <h3 className="font-semibold text-[#727891]">
-                {details[val as keyof typeof details]}
+                {details?.[val as keyof typeof details]}
               </h3>
             </div>
           ))}
@@ -88,7 +107,7 @@ export default function CustomerDetails() {
           </thead>
 
           <tbody>
-            {serviceData?.map(
+            {services?.map(
               (
                 {
                   serviceType,
@@ -120,7 +139,25 @@ export default function CustomerDetails() {
             )}
           </tbody>
         </table>
-        <AddServicePartial />
+        <div className=" mt-12">
+          <button
+            type="button"
+            onClick={() => setOpen((x) => !x)}
+            className=" px-9 p-3 bg-[#000000] text-sm font-semibold text-white rounded-[6px] hover:bg-[#201f1f] border-0"
+          >
+            Add New Service
+          </button>
+        </div>
+        <AddServiceModal
+          open={open}
+          setOpen={setOpen}
+          details={details!}
+          addService={(data) => {
+            setServices((prevServices) => {
+              return [data, ...prevServices];
+            });
+          }}
+        />
       </div>
     </div>
   );
